@@ -1,0 +1,20 @@
+# Identifiziere Textdateien automatisch und ignoriere eol Einstellungen des Benutzers
+* text=auto !eol
+
+# Weitere manuelle Definitionen von Textdateien
+*.php  text
+*.css  text
+*.js   text
+*.txt  text
+*.md   text
+*.xml  text
+*.json text
+*.bat  text
+*.sql  text
+*.yml  text
+
+# Garantiert keine Textdateien
+*.png  binary
+*.jpg  binary
+*.gif  binary
+*.ttf  binary
