@@ -23,9 +23,11 @@ before_install:
   - docker volume create informix
   - export INFORMIXDIR=/var/lib/docker/volumes/informix
 
+  - docker network create testnetwork
+
   # Run the Informix docker image
-  - docker run -d --name ifx -v informix:/opt/ibm/informix --privileged -p 9088:9088 -e LICENSE=accept -e DB_NAME=test -e DB_LOCALE=en_us.utf8 -e DBMONEY=Y4MD- ibmcom/informix-developer-database:${IFX_VERSION}
-  - docker run -e CHECK_PORT=9088 -e CHECK_HOST=localhost giorgos/takis
+  - docker run -d --name ifx -v informix:/opt/ibm/informix --network testnetwork --privileged -p 9088:9088 -e LICENSE=accept -e DB_NAME=test -e DB_LOCALE=en_us.utf8 -e DBMONEY=Y4MD- ibmcom/informix-developer-database:${IFX_VERSION}
+  - docker run --network testnetwork -e CHECK_PORT=9088 -e CHECK_HOST=ifx giorgos/takis
   - docker ps -a
 
   # Compile and enable the Informix PDO extension
