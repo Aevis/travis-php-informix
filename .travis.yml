@@ -18,14 +18,16 @@ before_install:
   - sudo apt-get update
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 
-  # Create the Informix directory
-  - mkdir /opt/informix
+  # Create a named volume for the Informix installation
+  # This provides host access to the required libraries for the PDO extension
+  - docker volume create informix
+  - export INFORMIXDIR=/var/lib/docker/volumes/informix
 
   # Run the Informix docker image
-  - docker run -it --name informix -v /opt/ibm/informix:/opt/ibm/informix --privileged -p 9088:9088 -e LICENSE=accept -e DB_NAME=test -e DB_LOCALE=en_us.utf8 -e DBMONEY=Y4MD- ibmcom/informix-developer-database:${IFX_VERSION}
+  - docker run --name ifx -v informix:/opt/ibm/informix --privileged -p 9088:9088 -e LICENSE=accept -e DB_NAME=test -e DB_LOCALE=en_us.utf8 -e DBMONEY=Y4MD- ibmcom/informix-developer-database:${IFX_VERSION}
+  - docker start ifx
 
   # Compile and enable the Informix PDO extension
-  - export INFORMIXDIR=/opt/ibm/informix
   - mkdir pdo_informix
   - (cd pdo_informix/; wget https://pecl.php.net/get/PDO_INFORMIX-${PDO_VERSION}.tgz -O pdo_informix.tgz && tar -xvf pdo_informix.tgz --strip 1)
   - (cd pdo_informix/; phpize && ./configure --with-pdo-informix=${INFORMIXDIR} && make && sudo make install)
