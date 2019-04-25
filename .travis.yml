@@ -22,13 +22,7 @@ before_install:
   - mkdir /opt/informix
 
   # Run the Informix docker image
-  - docker run -it --name informix -v /opt/ibm/informix:/opt/ibm/informix --privileged -p 9088:9088 \
-    -e LICENSE=accept \
-    -e DB_NAME=test \
-    -e DB_LOCALE=en_us.utf8 \
-    -e DBMONEY=Y4MD- \
-    -e DBDELIMITER='|' \
-    ibmcom/informix-developer-database:${IFX_VERSION}
+  - docker run -it --name informix -v /opt/ibm/informix:/opt/ibm/informix --privileged -p 9088:9088 -e LICENSE=accept -e DB_NAME=test -e DB_LOCALE=en_us.utf8 -e DBMONEY=Y4MD- ibmcom/informix-developer-database:${IFX_VERSION}
 
   # Compile and enable the Informix PDO extension
   - export INFORMIXDIR=/opt/ibm/informix
