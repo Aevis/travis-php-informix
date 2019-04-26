@@ -30,13 +30,10 @@ before_install:
   # Use takis to wait until the Informix DB initialization has finished
   - docker run --network=testnetwork -e CHECK_PORT=27017 -e CHECK_HOST=ifx giorgos/takis
 
-  # Add sbspace and create the test DB
-  - docker exec -it ifx bash
-  - touch "${INFORMIX_DATA_DIR}"/spaces/sbspace
-  - chmod 660 "${INFORMIX_DATA_DIR}"/spaces/sbspace
-  - onspaces -c -S sbspace -p "${INFORMIX_DATA_DIR}"/spaces/sbspace -o 0 -s 20000
-  - echo "CREATE DATABASE test WITH BUFFERED LOG" | dbaccess > /dev/null 2>&1
-  - exit
+  # Run the post-install script to add the sbspace and the test DB
+  - docker cp ${TRAVIS_BUILD_DIR}/post-install.sh ifx:/home/informix/post-install.sh
+  - docker exec -u root ifx bash -c "chmod +x /home/informix/post-install.sh"
+  - docker exec ifx bash -c "/home/informix/post-install.sh"
 
   # Compile and enable the Informix PDO extension
   - mkdir pdo_informix
