@@ -18,22 +18,23 @@ before_install:
   - sudo apt-get update
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 
-  # Create a named volume for the Informix installation
-  # This provides host access to the required libraries for the PDO extension
-  - docker volume create informix
-  - export INFORMIXDIR=/var/lib/docker/volumes/informix
-
   # Run the Informix docker image
   - docker network create testnetwork
   - docker run -td --network=testnetwork --name ifx -v informix:/opt/ibm/informix --privileged -p 9088:9088 -e "LICENSE=accept" -e "DB_LOCALE=en_US.utf8" -e "CLIENT_LOCALE=en_US.utf8" -e "DBMONEY=Y4MD-" -e "DBDELIMITER='|'" ibmcom/informix-developer-database:${IFX_VERSION}
 
   # Use takis to wait until the Informix DB initialization has finished
   - docker run --network=testnetwork -e CHECK_PORT=27017 -e CHECK_HOST=ifx giorgos/takis
+  - docker logs ifx
+  - docker ps -a
 
   # Run the post-install script to add the sbspace and the test DB
   - docker cp ${TRAVIS_BUILD_DIR}/post-install.sh ifx:/home/informix/post-install.sh
   - docker exec -u root ifx bash -c "chmod +x /home/informix/post-install.sh"
   - docker exec ifx bash -c "/home/informix/post-install.sh"
+
+  # Copy the required Informix libraries for the PDO extension into the host
+  - docker cp ifx:/opt/ibm/informix /opt/ibm/informix
+  - export INFORMIXDIR=/opt/ibm/informix
 
   # Compile and enable the Informix PDO extension
   - mkdir pdo_informix
