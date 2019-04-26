@@ -38,7 +38,7 @@ before_install:
   - (cd pdo_informix/; phpize && ./configure --with-pdo-informix=${INFORMIXDIR} && make && sudo make install)
   - echo "extension=pdo_informix.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - php -m | grep -i pdo
-  - php -r "echo phpversion('pdo_informixp');"
+  - php -r "echo phpversion('pdo_informix');"
 
 script:
   - php dbConnectionTest.php
