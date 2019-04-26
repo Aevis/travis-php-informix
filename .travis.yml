@@ -24,11 +24,19 @@ before_install:
   - export INFORMIXDIR=/var/lib/docker/volumes/informix
 
   # Run the Informix docker image
-  - docker run -d --name ifx -v informix:/opt/ibm/informix --privileged -p 9088:9088 -e LICENSE=accept -e DB_NAME=test -e DB_LOCALE=en_us.utf8 -e DBMONEY=Y4MD- ibmcom/informix-developer-database:${IFX_VERSION}
+  - docker network create testnetwork
+  - docker run -td --network=testnetwork --name ifx -v informix:/opt/ibm/informix --privileged -p 9088:9088 -e "LICENSE=accept" -e "DB_LOCALE=en_US.utf8" -e "CLIENT_LOCALE=en_US.utf8" -e "DBMONEY=Y4MD-" -e "DBDELIMITER='|'" ibmcom/informix-developer-database:${IFX_VERSION}
 
   # Use takis to wait until the Informix DB initialization has finished
-  - HOST_IP=`ip -4 addr show scope global dev docker0 | grep inet | awk '{print \$2}' | cut -d / -f 1`
-  - docker run -e CHECK_PORT=9088 -e CHECK_HOST=$HOST_IP giorgos/takis
+  - docker run --network=testnetwork -e CHECK_PORT=27017 -e CHECK_HOST=ifx giorgos/takis
+
+  # Add sbspace and create the test DB
+  - docker exec -it ifx bash
+  - touch "${INFORMIX_DATA_DIR}"/spaces/sbspace
+  - chmod 660 "${INFORMIX_DATA_DIR}"/spaces/sbspace
+  - onspaces -c -S sbspace -p "${INFORMIX_DATA_DIR}"/spaces/sbspace -o 0 -s 20000
+  - echo "CREATE DATABASE test WITH BUFFERED LOG" | dbaccess > /dev/null 2>&1
+  - exit
 
   # Compile and enable the Informix PDO extension
   - mkdir pdo_informix
