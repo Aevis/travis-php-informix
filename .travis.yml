@@ -17,7 +17,7 @@ before_install:
   # Run the Informix docker image
   - docker network create testnetwork
   - docker volume create ifx-data
-  - docker run -td --network=testnetwork --name ifx -v ifx-data:/opt/ibm/data --privileged -p 9088:9088 -e "LICENSE=accept" -e "DB_LOCALE=en_US.utf8" -e "CLIENT_LOCALE=en_US.utf8" -e "DBMONEY=Y4MD-" -e "DBDELIMITER='|'" ibmcom/informix-developer-database:${IFX_VERSION}
+  - docker run -td --network=testnetwork --name ifx -v ifx-data:/opt/ibm/data --privileged -p 9088:9088 -e "LICENSE=accept" -e "DB_LOCALE=en_US.utf8" -e "CLIENT_LOCALE=en_US.utf8" -e "DBMONEY=Y4MD-" -e "DBDELIMITER='|'" ibmcom/informix-innovator-c:${IFX_VERSION}
 
   # Use takis to wait until the Informix DB initialization has finished
   - docker run --network=testnetwork -e CHECK_PORT=27017 -e CHECK_HOST=ifx giorgos/takis
