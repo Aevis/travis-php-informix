@@ -27,7 +27,7 @@ before_install:
   - docker run -d --name ifx -v informix:/opt/ibm/informix --privileged -p 9088:9088 -e LICENSE=accept -e DB_NAME=test -e DB_LOCALE=en_us.utf8 -e DBMONEY=Y4MD- ibmcom/informix-developer-database:${IFX_VERSION}
 
   # Use takis to wait until the Informix DB initialization has finished
-  - HOST_IP = `ip -4 addr show scope global dev docker0 | grep inet | awk '{print \$2}' | cut -d / -f 1`
+  - HOST_IP=`ip -4 addr show scope global dev docker0 | grep inet | awk '{print \$2}' | cut -d / -f 1`
   - docker run -e CHECK_PORT=9088 -e CHECK_HOST=$HOST_IP giorgos/takis
 
   # Compile and enable the Informix PDO extension
