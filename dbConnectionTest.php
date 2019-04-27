@@ -4,7 +4,7 @@ try {
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $result=$db->query('select name from sysmaster:sysdatabases;');
     $dbnames=$result->fetchAll(PDO::FETCH_ASSOC);
-    echo 'DB Connection successfull:';
+    echo 'Informix connection successful, the following databases are installed:'.PHP_EOL;
     print_r($dbnames);
     exit(0);
 } catch (PDOException $e) {
