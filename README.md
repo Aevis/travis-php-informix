@@ -24,5 +24,9 @@ runs is the bash -c option. However, that leaves you without the Informix enviro
 every command with ```source /opt/ibm/scripts/informix_inf.env``` or put everything in a bash script and use that 
 (see post-install.sh example).
 
+* Instead of manually downloading and installing the Client SDK on the host for the PHP pdo_informix extension, simply 
+copy the ```/opt/ibm/informix``` folder from the Informix server container into the host and set the INFORMIXDIR environment
+variable.
+
 * The Developers Edition with default configuration fails during the disk initialization with a fatal error in 
 shared memory creation.
